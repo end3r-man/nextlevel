@@ -1,0 +1,253 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../../app/**/*.php';
+
+@theme {
+    /* ---- Brand palette (extracted from the client's legacy stylesheet & WCAG AA certified) ---- */
+    --color-brand-50: #eff5fc;
+    --color-brand-100: #dbe8f7;
+    --color-brand-200: #bcd5f0;
+    --color-brand-300: #8db8e5;
+    --color-brand-400: #5a93d6;
+    --color-brand-500: #3675c2;
+    --color-brand-600: #275da6;
+    --color-brand-700: #144b9e;
+    --color-brand-800: #0f3c81;
+    --color-brand-900: #0b2a5b;
+    --color-brand-950: #071b3c;
+
+    --color-accent-50: #fff5f1;
+    --color-accent-100: #ffe6dc;
+    --color-accent-200: #ffc9b4;
+    --color-accent-300: #ffa181;
+    --color-accent-400: #fd6c3a;
+    --color-accent-500: #fd5523;
+    --color-accent-600: #f03c0c;
+    --color-accent-700: #c72c09;
+    --color-accent-800: #9e260f;
+    --color-accent-900: #7f2310;
+
+    --color-ink-50: #f6f7f9;
+    --color-ink-100: #eceef2;
+    --color-ink-200: #d4d9e2;
+    --color-ink-300: #aeb7c9;
+    --color-ink-400: #8290aa;
+    --color-ink-500: #63718f;
+    --color-ink-600: #4d5875;
+    --color-ink-700: #404960;
+    --color-ink-800: #262f43;
+    --color-ink-900: #131a29;
+    --color-ink-950: #020e28;
+
+    --color-brand-dark: #1d1354;
+
+    /* ---- Typography ---- */
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Rethink Sans', 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+
+    /* ---- Elevation & Shadows ---- */
+    --shadow-soft: 0 4px 20px -4px rgb(2 6 23 / 0.06);
+    --shadow-card: 0 10px 30px -10px rgb(2 6 23 / 0.08), 0 4px 10px -2px rgb(2 6 23 / 0.04);
+    --shadow-lift: 0 20px 40px -15px rgb(37 99 235 / 0.22), 0 8px 16px -6px rgb(2 6 23 / 0.08);
+    --shadow-glow-accent: 0 12px 30px -8px rgb(249 115 22 / 0.35);
+    --shadow-glow-brand: 0 12px 30px -8px rgb(37 99 235 / 0.35);
+
+    /* ---- Motion ---- */
+    --animate-marquee: marquee 35s linear infinite;
+    --animate-marquee-slow: marquee 60s linear infinite;
+    --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    --animate-ripple: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    @keyframes marquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes ripple {
+        0% {
+            box-shadow: 0 0 0 0 rgb(37 99 235 / 0.5);
+        }
+        70% {
+            box-shadow: 0 0 0 16px rgb(37 99 235 / 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgb(37 99 235 / 0);
+        }
+    }
+
+    @keyframes pulse-slow {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.85; transform: scale(1.03); }
+    }
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 5.5rem;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-white text-ink-700 antialiased selection:bg-brand-500 selection:text-white;
+        font-family: var(--font-sans);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-display font-bold tracking-tight text-ink-950;
+        text-wrap: balance;
+    }
+
+    p {
+        text-wrap: pretty;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-accent-500;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reusable layout & component utilities
+ * ------------------------------------------------------------------------- */
+
+@utility container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility section {
+    @apply py-16 sm:py-20 lg:py-28;
+}
+
+/* ---- Buttons ---- */
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-bold
+           transition-all duration-200 ease-out no-underline cursor-pointer select-none disabled:opacity-50 disabled:pointer-events-none;
+}
+
+@utility btn-primary {
+    @apply btn bg-brand-600 text-white shadow-soft
+           hover:bg-brand-700 hover:shadow-glow-brand hover:-translate-y-0.5 active:translate-y-0 active:bg-brand-800;
+}
+
+@utility btn-accent {
+    @apply btn bg-accent-500 text-white shadow-soft
+           hover:bg-accent-600 hover:shadow-glow-accent hover:-translate-y-0.5 active:translate-y-0 active:bg-accent-700;
+}
+
+@utility btn-outline {
+    @apply btn border border-ink-200 bg-white text-ink-900 shadow-xs
+           hover:border-brand-500 hover:text-brand-600 hover:bg-brand-50/50 hover:-translate-y-0.5;
+}
+
+@utility btn-outline-light {
+    @apply btn border border-white/25 bg-white/5 text-white backdrop-blur-sm
+           hover:border-white hover:bg-white/15 hover:-translate-y-0.5;
+}
+
+@utility btn-ghost-light {
+    @apply btn border border-white/20 text-white hover:bg-white hover:text-ink-950 hover:-translate-y-0.5;
+}
+
+@utility btn-whatsapp {
+    @apply btn bg-[#25D366] text-white shadow-soft hover:bg-[#20bd5a] hover:shadow-lift hover:-translate-y-0.5;
+}
+
+/* ---- Badges / Eyebrows ---- */
+@utility eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-extrabold tracking-[0.16em] text-accent-600 uppercase;
+}
+
+@utility eyebrow-light {
+    @apply eyebrow text-accent-400;
+}
+
+@utility badge-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-bold transition-all;
+}
+
+@utility chip {
+    @apply inline-flex items-center gap-1.5 rounded-xl border border-ink-200/80 bg-white px-3.5 py-2
+           text-xs font-semibold text-ink-700 shadow-2xs transition-all hover:border-brand-400 hover:bg-brand-50/60 hover:text-brand-700 hover:-translate-y-0.5;
+}
+
+/* ---- Cards ---- */
+@utility card {
+    @apply rounded-2xl border border-ink-200/70 bg-white shadow-card transition-all;
+}
+
+@utility card-hover {
+    @apply card duration-300 hover:-translate-y-1.5 hover:border-brand-300/80 hover:shadow-lift;
+}
+
+@utility glass-dark {
+    @apply rounded-2xl border border-white/10 bg-slate-900/80 backdrop-blur-md shadow-2xl;
+}
+
+@utility glass-light {
+    @apply rounded-2xl border border-white/60 bg-white/80 backdrop-blur-md shadow-card;
+}
+
+@utility prose-body {
+    @apply text-base leading-relaxed text-ink-600;
+}
+
+@utility text-balance {
+    text-wrap: balance;
+}
+
+@utility marquee-mask {
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+@utility ring-ripple {
+    animation: var(--animate-ripple);
+}
+
+/* ---- Gradients & Decorative Backgrounds ---- */
+.hero-gradient-bg {
+    background: radial-gradient(120% 100% at 50% 0%, #0d1b3e 0%, #050b18 60%, #020617 100%);
+}
+
+.glow-mesh {
+    background-image:
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.12) 0px, transparent 50%);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-accent {
+    background: linear-gradient(135deg, #fdba74 0%, #fb923c 50%, #f97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
