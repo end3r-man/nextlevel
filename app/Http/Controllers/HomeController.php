@@ -22,7 +22,7 @@ class HomeController extends Controller
         $services = Service::active()->ordered()->get();
         $primaryLocations = Location::active()->where('priority_tier', 1)->orderBy('sort_order')->get();
         $allLocations = Location::active()->primary()->get();
-        $testimonials = Testimonial::active()->ordered()->limit(4)->get();
+        $testimonials = Testimonial::active()->ordered()->limit(3)->get();
         $gallery = GalleryImage::active()->ordered()->limit(6)->get();
         $faqs = Faq::active()->ordered()->limit(8)->get();
         $posts = Post::published()->latestFirst()->limit(3)->get();
