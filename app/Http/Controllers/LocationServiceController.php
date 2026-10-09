@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GalleryImage;
 use App\Models\Location;
 use App\Models\Service;
 use App\Models\Testimonial;
@@ -61,6 +62,8 @@ class LocationServiceController extends Controller
             ->limit(2)
             ->get();
 
+        $galleryImages = GalleryImage::forService($service, 4);
+
         $crumbs = [
             ['title' => 'Home', 'url' => route('home')],
             ['title' => 'Services', 'url' => route('services.index')],
@@ -81,7 +84,7 @@ class LocationServiceController extends Controller
 
         return view('services.location', compact(
             'location', 'service', 'services', 'otherLocations', 'otherServices',
-            'testimonials', 'title', 'description', 'schema', 'crumbs', 'keyword',
+            'testimonials', 'galleryImages', 'title', 'description', 'schema', 'crumbs', 'keyword',
         ));
     }
 

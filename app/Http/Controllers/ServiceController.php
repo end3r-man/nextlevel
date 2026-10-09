@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GalleryImage;
 use App\Models\Location;
 use App\Models\Service;
 use App\Models\Testimonial;
@@ -16,6 +17,7 @@ class ServiceController extends Controller
         $services = Service::active()->ordered()->get();
         $primaryLocations = Location::active()->where('priority_tier', 1)->orderBy('sort_order')->get();
         $testimonials = Testimonial::active()->ordered()->limit(3)->get();
+        $galleryImages = GalleryImage::active()->ordered()->limit(8)->get();
 
         $title = 'Our Moving & Relocation Services | Packers and Movers Erode, Coimbatore';
         $description = 'House shifting, office relocation, local and international moving, packing, loading, '
@@ -36,7 +38,7 @@ class ServiceController extends Controller
         ];
 
         return view('services.index', compact(
-            'services', 'primaryLocations', 'testimonials', 'title', 'description', 'schema', 'crumbs',
+            'services', 'primaryLocations', 'testimonials', 'galleryImages', 'title', 'description', 'schema', 'crumbs',
         ));
     }
 
@@ -54,6 +56,8 @@ class ServiceController extends Controller
             ->where('service_id', $service->id)
             ->ordered()
             ->get();
+
+        $galleryImages = GalleryImage::forService($service, 6);
 
         // The service x location pages are the money pages. Linking every
         // service to every tier-1 and tier-2 city builds a dense internal
@@ -85,7 +89,7 @@ class ServiceController extends Controller
         ];
 
         return view('services.show', compact(
-            'service', 'locations', 'related', 'testimonials', 'targetLocations',
+            'service', 'locations', 'related', 'testimonials', 'targetLocations', 'galleryImages',
             'title', 'description', 'schema', 'crumbs',
         ));
     }

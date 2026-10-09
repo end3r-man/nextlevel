@@ -100,16 +100,21 @@
         <div class="flex justify-center">
             <div
                 class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-white/90 backdrop-blur-sm">
-                <span class="h-2 w-2 rounded-full bg-white"></span>
-                Next Level Packers & Movers
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                Trusted Moving Partner
             </div>
         </div>
 
         {{-- Main heading --}}
-        <h1
-            class="mx-auto mt-8 max-w-5xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
-            Packers & Movers
-            <span class="mt-2 block text-white/70">in Erode & Tamil Nadu</span>
+        <h1 class="mx-auto mt-6 max-w-5xl text-center font-black tracking-tight text-white">
+            <span
+                class="block text-5xl sm:text-7xl md:text-8xl lg:text-9xl uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/70">
+                Next Level
+            </span>
+            <span
+                class="mt-3 block text-xl font-medium tracking-widest uppercase text-white/80 sm:text-3xl md:text-4xl">
+                Packers & Movers <span class="text-white/50 font-light">|</span> Erode & Tamil Nadu
+            </span>
         </h1>
 
         {{-- Tagline --}}
@@ -117,11 +122,6 @@
             Stress-Free Shifting Starts Here
         </p>
 
-        {{-- Description --}}
-        <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
-            Professional packing, safe transportation, and reliable relocation services for homes, offices, and
-            businesses.
-        </p>
 
         {{-- CTA buttons --}}
         <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">

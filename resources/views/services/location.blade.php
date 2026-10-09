@@ -47,9 +47,6 @@
                     {{ $service->name }} across {{ $city }}, handled by our own crew
                 </h2>
 
-                {{-- The service copy and the city copy are deliberately kept in
-                     separate blocks. Merging them into one paragraph is what makes
-                     300 programmatic pages read as duplicates. --}}
                 <div class="mt-6 space-y-5 text-base leading-relaxed text-ink-600">
                     <p>
                         We handle {{ strtolower($service->name) }} in {{ $city }} every week. Whether it is
@@ -58,13 +55,19 @@
                         employees, not a broker forwarding your booking to whoever is free that morning.
                     </p>
 
-                    <p>{!! nl2br(e($service->description)) !!}</p>
+                    <div class="prose-nlp">
+                        {!! $service->description !!}
+                    </div>
                 </div>
 
                 @if ($location->description)
-                    <h3 class="mt-10 text-xl">Moving within {{ $city }} and around it</h3>
-                    <div class="mt-4 space-y-4 text-base leading-relaxed text-ink-600">
-                        {!! nl2br(e($location->description)) !!}
+                    <h3 class="mt-10 text-xl font-bold text-ink-900">Moving within {{ $city }} and around it</h3>
+                    <div class="prose-nlp mt-4 space-y-4 text-base leading-relaxed text-ink-600">
+                        @if (str_contains($location->description, '<p>') || str_contains($location->description, '<div>'))
+                            {!! $location->description !!}
+                        @else
+                            {!! nl2br(e($location->description)) !!}
+                        @endif
                     </div>
                 @endif
 
@@ -196,8 +199,61 @@
     </section>
 @endif
 
+{{-- ============================== GALLERY / WORK IN ACTION ============================== --}}
+@if (isset($galleryImages) && $galleryImages->isNotEmpty())
+    <section class="section">
+        <div class="container-page">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <p class="eyebrow mb-2">
+                        <x-icon name="image" class="w-4 h-4" />
+                        Photos from the field
+                    </p>
+                    <h2 class="text-2xl font-bold sm:text-3xl">{{ $service->name }} in action</h2>
+                    <p class="mt-2 text-sm text-ink-600 max-w-xl">
+                        Real shifting and packing photos from our own crew handling {{ strtolower($service->name) }} jobs.
+                    </p>
+                </div>
+                <a href="{{ route('gallery') }}" class="btn-outline shrink-0 text-xs">
+                    View full gallery
+                    <x-icon name="arrow-right" class="w-3.5 h-3.5" />
+                </a>
+            </div>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ($galleryImages as $img)
+                    <button type="button"
+                            class="card-hover group relative overflow-hidden rounded-2xl text-left bg-white"
+                            data-lightbox-trigger="{{ asset($img->image) }}"
+                            data-lightbox-alt="{{ $img->alt_text }}"
+                            data-lightbox-title="{{ $img->caption ?? $img->title }}"
+                            aria-label="View larger: {{ $img->title }}">
+                        <div class="relative aspect-[4/3] w-full overflow-hidden bg-ink-100">
+                            <img src="{{ asset($img->image) }}"
+                                 alt="{{ $img->alt_text }}"
+                                 width="600" height="450" loading="lazy" decoding="async"
+                                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/20 to-transparent"></div>
+                            <span class="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-ink-950/60 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-xs">
+                                <x-icon name="image" class="w-3 h-3 text-accent-400" />
+                                <span>Expand</span>
+                            </span>
+                        </div>
+                        <div class="p-3.5">
+                            <p class="font-bold text-xs text-ink-900 line-clamp-1">{{ $img->title }}</p>
+                            @if ($img->caption || $img->alt_text)
+                                <p class="mt-0.5 text-[11px] text-ink-500 line-clamp-1">{{ $img->caption ?? $img->alt_text }}</p>
+                            @endif
+                        </div>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+    </section>
+@endif
+
 {{-- ============================== ALL SERVICES IN THIS CITY ============================== --}}
-<section class="section">
+<section class="section bg-ink-50">
     <div class="container-page">
         <x-section-heading :eyebrow="'In '.$city" title="Everything we do in this city" align="left" />
 
@@ -223,6 +279,8 @@
         </ul>
     </div>
 </section>
+
+<x-lightbox />
 
 <x-quote-form :source="$service->slug.' in '.$location->slug"
               :heading="'Book '.$service->name.' in '.$city"

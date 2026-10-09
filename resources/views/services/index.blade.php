@@ -130,6 +130,59 @@
     </section>
 @endif
 
+{{-- ============================== GALLERY / REAL WORK ============================== --}}
+@if (isset($galleryImages) && $galleryImages->isNotEmpty())
+    <section class="section">
+        <div class="container-page">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <x-section-heading
+                        eyebrow="Operations in action"
+                        title="Real work across our 12 services"
+                        lead="A glimpse into everyday moves, packing standards and vehicle fleets handled by our full-time crews."
+                        align="left"
+                    />
+                </div>
+                <a href="{{ route('gallery') }}" class="btn-outline shrink-0 text-xs">
+                    Explore all photos
+                    <x-icon name="arrow-right" class="w-3.5 h-3.5" />
+                </a>
+            </div>
+
+            <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ($galleryImages as $img)
+                    <button type="button"
+                            class="card-hover group relative overflow-hidden rounded-2xl text-left bg-white"
+                            data-lightbox-trigger="{{ asset($img->image) }}"
+                            data-lightbox-alt="{{ $img->alt_text }}"
+                            data-lightbox-title="{{ $img->caption ?? $img->title }}"
+                            aria-label="View larger: {{ $img->title }}">
+                        <div class="relative aspect-[4/3] w-full overflow-hidden bg-ink-100">
+                            <img src="{{ asset($img->image) }}"
+                                 alt="{{ $img->alt_text }}"
+                                 width="600" height="450" loading="lazy" decoding="async"
+                                 class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-ink-950/80 via-ink-950/20 to-transparent"></div>
+                            <span class="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-ink-950/60 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-xs">
+                                <x-icon name="image" class="w-3 h-3 text-accent-400" />
+                                <span>Expand</span>
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <p class="font-bold text-sm text-ink-900 line-clamp-1">{{ $img->title }}</p>
+                            @if ($img->caption || $img->alt_text)
+                                <p class="mt-1 text-xs text-ink-500 line-clamp-1">{{ $img->caption ?? $img->alt_text }}</p>
+                            @endif
+                        </div>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+    </section>
+@endif
+
+<x-lightbox />
+
 <x-quote-form source="services-index" />
 
 @endsection

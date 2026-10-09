@@ -37,11 +37,8 @@
         <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
 
             <div class="lg:col-span-8">
-                {{-- Bodies are authored in the admin/seed content, not by site
-                     visitors. Still escaped and nl2br'd so nothing unexpected
-                     can inject markup. --}}
-                <div class="prose-nlp max-w-none space-y-5 text-base leading-[1.75] text-ink-700">
-                    {!! nl2br(e($post->body)) !!}
+                <div class="prose-nlp max-w-none text-base leading-[1.75] text-ink-700">
+                    {!! $post->body !!}
                 </div>
 
                 <div class="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-ink-200 pt-8">
