@@ -8,6 +8,8 @@ use App\Models\Service;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url as SitemapUrl;
 
 /**
  * Sitemap and robots.
@@ -33,42 +35,42 @@ class SeoController extends Controller
 
     public function sitemap(): Response
     {
-        $urls = [];
+        $sitemap = Sitemap::create();
+        $now = Carbon::now();
 
-        $add = function (string $loc, Carbon|string $lastmod, string $priority, ?string $changefreq = null) use (&$urls) {
-            $entry = ['loc' => $loc, 'lastmod' => $lastmod, 'priority' => $priority];
-            if ($changefreq) {
-                $entry['changefreq'] = $changefreq;
-            }
-            $urls[] = $entry;
+        $add = function (string $loc, Carbon $lastmod, float $priority, string $changefreq) use ($sitemap) {
+            $sitemap->add(
+                SitemapUrl::create($loc)
+                    ->setLastModificationDate($lastmod)
+                    ->setChangeFrequency($changefreq)
+                    ->setPriority($priority)
+            );
         };
 
-        $now = Carbon::now()->toAtomString();
-
         // Static / editorial pages
-        $add(route('home'), $now, '1.0', 'weekly');
-        $add(route('services.index'), $now, '0.9', 'monthly');
-        $add(route('locations.index'), $now, '0.9', 'monthly');
-        $add(route('about'), $now, '0.7', 'yearly');
-        $add(route('contact'), $now, '0.8', 'yearly');
-        $add(route('faq'), $now, '0.7', 'monthly');
-        $add(route('gallery'), $now, '0.5', 'monthly');
-        $add(route('testimonials'), $now, '0.5', 'monthly');
-        $add(route('blog.index'), $now, '0.7', 'weekly');
+        $add(route('home'), $now, 1.0, SitemapUrl::CHANGE_FREQUENCY_WEEKLY);
+        $add(route('services.index'), $now, 0.9, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
+        $add(route('locations.index'), $now, 0.9, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
+        $add(route('about'), $now, 0.7, SitemapUrl::CHANGE_FREQUENCY_YEARLY);
+        $add(route('contact'), $now, 0.8, SitemapUrl::CHANGE_FREQUENCY_YEARLY);
+        $add(route('faq'), $now, 0.7, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
+        $add(route('gallery'), $now, 0.5, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
+        $add(route('testimonials'), $now, 0.5, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
+        $add(route('blog.index'), $now, 0.7, SitemapUrl::CHANGE_FREQUENCY_WEEKLY);
 
         // Services — highest-value static pages
         foreach (Service::active()->ordered()->get() as $service) {
-            $add(route('services.show', $service), $service->updated_at->toAtomString(), '0.9', 'monthly');
+            $add(route('services.show', $service), $service->updated_at ?? $now, 0.9, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
         }
 
         // Locations — tier drives priority so the money cities are crawled first
         foreach (Location::active()->primary()->get() as $location) {
             $priority = match ($location->priority_tier) {
-                1 => '0.9',
-                2 => '0.8',
-                default => '0.6',
+                1 => 0.9,
+                2 => 0.8,
+                default => 0.6,
             };
-            $add(route('locations.show', $location), $location->updated_at->toAtomString(), $priority, 'monthly');
+            $add(route('locations.show', $location), $location->updated_at ?? $now, $priority, SitemapUrl::CHANGE_FREQUENCY_MONTHLY);
         }
 
         // Service x location combos. These are 300+ pages, so they are grouped
@@ -78,21 +80,19 @@ class SeoController extends Controller
             foreach (Service::active()->get() as $service) {
                 $add(
                     route('services.location', [$location, $service]),
-                    max($location->updated_at, $service->updated_at)->toAtomString(),
-                    $location->priority_tier === 1 ? '0.8' : '0.5',
-                    'monthly',
+                    max($location->updated_at ?? $now, $service->updated_at ?? $now),
+                    $location->priority_tier === 1 ? 0.8 : 0.5,
+                    SitemapUrl::CHANGE_FREQUENCY_MONTHLY,
                 );
             }
         }
 
         // Blog
         foreach (Post::published()->latestFirst()->get() as $post) {
-            $add(route('blog.show', $post), $post->updated_at->toAtomString(), '0.6', 'yearly');
+            $add(route('blog.show', $post), $post->updated_at ?? $now, 0.6, SitemapUrl::CHANGE_FREQUENCY_YEARLY);
         }
 
-        $xml = view('seo.sitemap', compact('urls'))->render();
-
-        return response($xml, 200, [
+        return response($sitemap->render(), 200, [
             'Content-Type' => 'application/xml; charset=UTF-8',
             'Cache-Control' => 'public, max-age=3600',
         ]);
