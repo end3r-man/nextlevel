@@ -30,6 +30,9 @@
             ">
         </div>
 
+        <img class="absolute top-0 left-0 size-full object-cover opacity-25" src="/images/hero_bg.png"
+            alt="Next Level Packers and Movers">
+
         {{-- Route / map rings --}}
         <div
             class="absolute -left-[280px] top-1/2 h-[720px] w-[720px] -translate-y-1/2 rounded-full border border-white/[0.07]">
