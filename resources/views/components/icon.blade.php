@@ -1,8 +1,4 @@
-@props([
-    'name',
-    'class' => 'w-5 h-5',
-    'label' => null,
-])
+@props(['name', 'class' => 'w-5 h-5', 'label' => null])
 
 @php
     // Generated map: ['icons' => ['ph:map-pin-fill' => [...]], 'aliases' => ['pin' => 'ph:map-pin-fill']]
@@ -15,18 +11,14 @@
     $icon = $icons[$key] ?? null;
 
     // Unknown icons must fail loudly in development but never break a page.
-    if ($icon === null && ! app()->isProduction()) {
+    if ($icon === null && !app()->isProduction()) {
         logger()->warning("[icon] unknown icon '{$name}' — not found in resources/icons.php. Run `npm run icons`.");
     }
 @endphp
 
 @if ($icon)
-    <svg {{ $attributes->merge(['class' => $class]) }}
-         xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 {{ $icon['width'] }} {{ $icon['height'] }}"
-         width="{{ $icon['width'] }}"
-         height="{{ $icon['height'] }}"
-         fill="currentColor"
-         @if ($label) role="img" aria-label="{{ $label }}" @else aria-hidden="true" focusable="false" @endif
-    >{!! $icon['body'] !!}</svg>
+    <svg {{ $attributes->merge(['class' => $class]) }} xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 {{ $icon['width'] }} {{ $icon['height'] }}" width="{{ $icon['width'] }}"
+        height="{{ $icon['height'] }}" fill="currentColor"
+        @if ($label) role="img" aria-label="{{ $label }}" @else aria-hidden="true" focusable="false" @endif>{!! $icon['body'] !!}</svg>
 @endif
